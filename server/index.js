@@ -1,6 +1,10 @@
 const express = require("express");
-const model = require("./models/model");
+const crypto = require("crypto");
+const usertoken = require("./models/token");
+const model = require("./models/user");
+
 const mongoose = require("mongoose");
+const mailer = require("./mailer/mail");
 
 const app = express();
 
@@ -21,7 +25,10 @@ app.get("/", async (req, res) => {
 app.post("/user", async (req, res) => {
   const { firstName, lastName, Email, Password } = req.body;
 
+  console.log(req);
+
   try {
+    console.log(req.body.firstName);
     const user = await new model({
       first_name: firstName,
       last_name: lastName,
@@ -30,6 +37,21 @@ app.post("/user", async (req, res) => {
     });
     await user.save();
     res.send(user);
+
+    const token = await new usertoken({
+      userld: user._id,
+      token: crypto.randomBytes(32).toString("hex"),
+    });
+    token.save();
+    const url = `http://localhost:3000/test/${user._id}/verify/${token.token}`;
+    const message = {
+      from: "okoliechukwuebukathereson@gmail.com",
+      to: Email,
+      subject: "user verification",
+      html: url,
+    };
+
+    await mailer.sendMail(message);
   } catch (err) {
     console.log(err.message);
   }
