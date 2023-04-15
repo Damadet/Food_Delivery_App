@@ -9,4 +9,13 @@ const config = {
 };
 const transporter = nodemailer.createTransport(config);
 
-module.export = transporter;
+const message = {
+  from: "okoliechukwuebukathereson@gmail.com",
+  to: "gerardokolie09@gmail.com",
+  subject: "user verification",
+  html: "hello from server",
+};
+
+transporter.sendMail(message);
+
+module.exports = transporter;

@@ -24,13 +24,14 @@ app.get("/", async (req, res) => {
 
 app.post("/user", async (req, res) => {
   const { firstName, lastName, Email, Password } = req.body;
-
-  console.log(req);
-
   try {
-    console.log(req.body.firstName);
-    const user = await new model({
+    let user = await model.findOne({ email: req.body.Email });
+    if (user) {
+      return res.status(409).send("user with given email already exists");
+    }
+    user = await new model({
       first_name: firstName,
+
       last_name: lastName,
       email: Email,
       password: Password,
