@@ -17,9 +17,62 @@ const connect = async (uri) => {
   await console.log("connected to mongodb");
 };
 connect(uri);
-app.get("/", async (req, res) => {
-  data = await model.find();
-  res.send(data);
+app.get("/pay", async (req, res) => {
+  const https = require("https");
+  const params = JSON.stringify({
+    email: req.query.email,
+    amount: req.query.amount,
+  });
+
+  const options = {
+    hostname: "api.paystack.co",
+    port: 443,
+    path: "/transaction/initialize",
+    method: "POST",
+    headers: {
+      Authorization: "Bearer sk_test_04f773dabdf48906f2e7a3312a2bc030f5fb7f0f",
+      "Content-Type": "application/json",
+    },
+  };
+
+  const reqpay = https
+    .request(options, (res) => {
+      let data = "";
+
+      res.on("data", (chunk) => {
+        data += chunk;
+      });
+
+      res.on("end", () => {
+        console.log(JSON.parse(data));
+      });
+    })
+    .on("error", (error) => {
+      console.error(error);
+    });
+
+  reqpay.write(params);
+  reqpay.end();
+});
+
+app.get("/test/:id/verify/:token", async (req, res) => {
+  try {
+    const user = await model.findOne({ _id: req.params.id });
+    if (!user) {
+      return res.send("invalid link");
+    }
+    const token = await usertoken.findOne({
+      userld: user._id,
+      token: req.params.token,
+    });
+    if (!token) {
+      return res.send("invalid link");
+    }
+    await user.updateOne({ _id: user._id, verified: true });
+    await token.remove();
+  } catch (err) {
+    console.log(err.message);
+  }
 });
 
 app.post("/user", async (req, res) => {
