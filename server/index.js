@@ -10,7 +10,7 @@ const app = express();
 
 app.use(express.json());
 
-const uri = "mongodb://127.0.0.1:27017/app_test";
+const uri = "mongodb+srv://user:alxpassword@cluster0.3ioz1xh.mongodb.net/?retryWrites=true&w=majority";
 
 const connect = async (uri) => {
   await mongoose.connect(uri);

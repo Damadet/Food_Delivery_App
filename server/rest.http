@@ -1,9 +1,7 @@
 POST http://localhost:3000/user
-Content-Type: application/json
 
-{
-    "firstName": "ja,es",
-    "lastName": "bellion",
-    "Email" : "gerardoklie09@gmail.com",
-    "Password": "axaxaxaca",
-}
+
+
+
+###
+GET http://localhost:3000/pay?email=adedok@gmail.com&amount=200
