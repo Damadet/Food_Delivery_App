@@ -1,8 +1,11 @@
 const express = require("express");
 const crypto = require("crypto");
 const usertoken = require("./models/token");
-const model = require("./models/user");
+const userModel = require("./models/user");
+const {validateUser, validate} = require("./middlewares/validator")
+require ('./db')
 
+const PORT = process.env.PORT || 3000;
 const mongoose = require("mongoose");
 const mailer = require("./mailer/mail");
 
@@ -10,13 +13,7 @@ const app = express();
 
 app.use(express.json());
 
-const uri = "mongodb+srv://user:alxpassword@cluster1.h6pxllx.mongodb.net/?retryWrites=true&w=majority";
 
-const connect = async (uri) => {
-  await mongoose.connect(uri);
-  await console.log("connected to mongodb");
-};
-connect(uri);
 app.get("/pay", async (req, res) => {
   const https = require("https");
   const params = JSON.stringify({
@@ -57,7 +54,7 @@ app.get("/pay", async (req, res) => {
 
 app.get("/test/:id/verify/:token", async (req, res) => {
   try {
-    const user = await model.findOne({ _id: req.params.id });
+    const user = await userModel.findOne({ _id: req.params.id });
     if (!user) {
       return res.send("invalid link");
     }
@@ -75,14 +72,16 @@ app.get("/test/:id/verify/:token", async (req, res) => {
   }
 });
 
-app.post("/user", async (req, res) => {
+
+
+app.post("/user", validateUser, validate, async (req, res) => {
   const { firstName, lastName, Email, Password } = req.body;
   try {
-    let user = await model.findOne({ email: req.body.Email });
+    let user = await userModel.findOne({ email: req.body.Email });
     if (user) {
       return res.status(409).send("user with given email already exists");
     }
-    user = await new model({
+    user = await new userModel({
       first_name: firstName,
 
       last_name: lastName,
@@ -97,7 +96,7 @@ app.post("/user", async (req, res) => {
       token: crypto.randomBytes(32).toString("hex"),
     });
     token.save();
-    const url = `http://localhost:3000/test/${user._id}/verify/${token.token}`;
+    const url = `http://localhost:${PORT}/test/${user._id}/verify/${token.token}`;
     const message = {
       from: "okoliechukwuebukathereson@gmail.com",
       to: Email,
@@ -111,6 +110,6 @@ app.post("/user", async (req, res) => {
   }
 });
 
-app.listen(3000, () => {
-  console.log("running on port 3000");
+app.listen(PORT, () => {
+  console.log(`running on port ${PORT}`);
 });
