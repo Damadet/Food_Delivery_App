@@ -2,6 +2,7 @@ const express = require("express");
 const crypto = require("crypto");
 const usertoken = require("./models/token");
 const userModel = require("./models/user");
+const {validateUser, validate} = require("./middlewares/validator")
 require ('./db')
 
 const PORT = process.env.PORT || 3000;
@@ -73,7 +74,7 @@ app.get("/test/:id/verify/:token", async (req, res) => {
 
 
 
-app.post("/user", async (req, res) => {
+app.post("/user", validateUser, validate, async (req, res) => {
   const { firstName, lastName, Email, Password } = req.body;
   try {
     let user = await userModel.findOne({ email: req.body.Email });
