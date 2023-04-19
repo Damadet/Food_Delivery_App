@@ -1,7 +1,7 @@
 const express = require("express");
 const crypto = require("crypto");
 const usertoken = require("./models/token");
-const model = require("./models/user");
+const userModel = require("./models/user");
 require ('./db')
 
 const PORT = process.env.PORT || 3000;
@@ -53,7 +53,7 @@ app.get("/pay", async (req, res) => {
 
 app.get("/test/:id/verify/:token", async (req, res) => {
   try {
-    const user = await model.findOne({ _id: req.params.id });
+    const user = await userModel.findOne({ _id: req.params.id });
     if (!user) {
       return res.send("invalid link");
     }
@@ -73,15 +73,14 @@ app.get("/test/:id/verify/:token", async (req, res) => {
 
 
 
-
 app.post("/user", async (req, res) => {
   const { firstName, lastName, Email, Password } = req.body;
   try {
-    let user = await model.findOne({ email: req.body.Email });
+    let user = await userModel.findOne({ email: req.body.Email });
     if (user) {
       return res.status(409).send("user with given email already exists");
     }
-    user = await new model({
+    user = await new userModel({
       first_name: firstName,
 
       last_name: lastName,
