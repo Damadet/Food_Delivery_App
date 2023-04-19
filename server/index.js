@@ -2,7 +2,9 @@ const express = require("express");
 const crypto = require("crypto");
 const usertoken = require("./models/token");
 const model = require("./models/user");
+require ('./db')
 
+const PORT = process.env.PORT || 3000;
 const mongoose = require("mongoose");
 const mailer = require("./mailer/mail");
 
@@ -10,13 +12,7 @@ const app = express();
 
 app.use(express.json());
 
-const uri = "mongodb+srv://user:alxpassword@cluster1.h6pxllx.mongodb.net/?retryWrites=true&w=majority";
 
-const connect = async (uri) => {
-  await mongoose.connect(uri);
-  await console.log("connected to mongodb");
-};
-connect(uri);
 app.get("/pay", async (req, res) => {
   const https = require("https");
   const params = JSON.stringify({
@@ -75,6 +71,9 @@ app.get("/test/:id/verify/:token", async (req, res) => {
   }
 });
 
+
+
+
 app.post("/user", async (req, res) => {
   const { firstName, lastName, Email, Password } = req.body;
   try {
@@ -97,7 +96,7 @@ app.post("/user", async (req, res) => {
       token: crypto.randomBytes(32).toString("hex"),
     });
     token.save();
-    const url = `http://localhost:3000/test/${user._id}/verify/${token.token}`;
+    const url = `http://localhost:${PORT}/test/${user._id}/verify/${token.token}`;
     const message = {
       from: "okoliechukwuebukathereson@gmail.com",
       to: Email,
@@ -111,6 +110,6 @@ app.post("/user", async (req, res) => {
   }
 });
 
-app.listen(3000, () => {
-  console.log("running on port 3000");
+app.listen(PORT, () => {
+  console.log(`running on port ${PORT}`);
 });
