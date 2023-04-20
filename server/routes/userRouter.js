@@ -5,13 +5,15 @@ const jwt = require('jsonwebtoken');
 const {validateUser, validate} = require("../middlewares/validator")
 const mailer = require("../mailer/mail");
 
-router.post("/user", validateUser, validate, async (req, res) => {
-  const { firstName, lastName, Email, Password } = req.body;
+router.post("/create-user", validateUser, validate, async (req, res) => {
+  const { firstName, lastName, Email, Password, confirmPassword } = req.body;
   try {
     let user = await userModel.findOne({ email: req.body.Email });
     if (user) {
-      return res.status(400).send("user with given email already exists");
-    }
+      return res.status(400).send("user with given email already exists");}
+      if (!password === confirmPassword){ 
+        return res.status(400).send("Passwords need to match")
+      }
     user = await new userModel({
       first_name: firstName,
       last_name: lastName,

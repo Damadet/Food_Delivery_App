@@ -9,6 +9,7 @@ const mailer = require("./mailer/mail");
 const cors = require('cors');
 require('dotenv').config();
 const db = require ('./db');
+const userRoute = require('./routes/userRouter');
 
 
 const PORT = process.env.PORT || 3000;
@@ -18,11 +19,12 @@ const app = express();
 
 
 const corsOptions = {
-  origin: `http://localhost:${3000}`
+  origin: `http://localhost:${PORT}`
 }
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true}));
+app.use('/use', userRoute);
 
 db.on('error', console.error.bind(console, 'MongoDB connection error'));
 
@@ -84,40 +86,7 @@ app.get("/test/:id/verify/:token", async (req, res) => {
   }
 });
 
-app.post("/user", validateUser, validate, async (req, res) => {
-  const { firstName, lastName, Email, Password } = req.body;
-  try {
-    let user = await userModel.findOne({ email: req.body.Email });
-    if (user) {
-      return res.status(400).send("user with given email already exists");
-    }
-    user = await new userModel({
-      first_name: firstName,
-      last_name: lastName,
-      email: Email,
-      password: Password,
-    });
-    await user.save();
-    res.send(user);
 
-    const token = await new usertoken({
-      userld: user._id,
-      token: crypto.randomBytes(32).toString("hex"),
-    });
-    token.save();
-    const url = `http://localhost:${PORT}/test/${user._id}/verify/${token.token}`;
-    const message = {
-      from: "okoliechukwuebukathereson@gmail.com",
-      to: Email,
-      subject: "user verification",
-      html: url,
-    };
-
-    await mailer.sendMail(message);
-  } catch (err) {
-    console.log(err.message);
-  }
-});
 
 app.post("/user/login", async(req, res) => {
   const { Email, Password } = req.body;
