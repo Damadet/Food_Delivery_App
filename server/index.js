@@ -3,6 +3,8 @@ const crypto = require("crypto");
 const usertoken = require("./models/token");
 const userModel = require("./models/user");
 const {validateUser, validate} = require("./middlewares/validator")
+const jwt = require('jsonwebtoken')
+require('dotenv').config();
 require ('./db')
 
 const PORT = process.env.PORT || 3000;
@@ -72,7 +74,46 @@ app.get("/test/:id/verify/:token", async (req, res) => {
   }
 });
 
+app.post("/user/login", async(req, res) => {
+  const { Email, Password } = req.body;
+  try{
+    if(!Email.trim() || !Password.trim()) return res.status(400).send("email or password is missing");
 
+    const user = await userModel.findOne({ email: req.body.Email })
+    if(!user) return res.status(409).send('User not found');
+    const isMatched = await user.comparePassword(Password)
+    if(!isMatched) return res.status(409).send('Wrong email/password');
+
+    const token = jwt.sign({userId: user._id}, process.env.JWT_SECRET, {
+      expiresIn: '1d'
+    })
+    
+    res.json({email: Email, password: Password, fname: user.first_name, lname: user.last_name, token: token});
+  }catch(err){
+    console.log(err.message);
+  }
+})
+
+
+app.post("u", async (req, res) => {
+  const { Email, Password } = req.body;
+  try{
+    if(!Email.trim() || !Password.trim()) return res.status(400).send("email or password is missing");
+
+    const user = await userModel.findOne({ email: req.body.Email });
+    if(!user) return res.status(400).send('User not found');
+    const isMatched = await user.comparePassword(Password)
+    if(!isMatched) return res.status(409).send('Wrong email/password');
+
+    const token = jwt.sign({userId: user._id}, process.env.JWT_SECRET, {
+      expiresIn: '1d'
+    }) 
+    res.json({success: true, user: {email: user.email, name: user.Name}})
+  }catch (err) {
+    console.log(err.message);
+  }
+
+})
 
 app.post("/user", validateUser, validate, async (req, res) => {
   const { firstName, lastName, Email, Password } = req.body;
@@ -83,7 +124,6 @@ app.post("/user", validateUser, validate, async (req, res) => {
     }
     user = await new userModel({
       first_name: firstName,
-
       last_name: lastName,
       email: Email,
       password: Password,
