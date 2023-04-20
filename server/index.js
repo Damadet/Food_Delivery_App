@@ -2,21 +2,20 @@ const express = require("express");
 const crypto = require("crypto");
 const usertoken = require("./models/token");
 const userModel = require("./models/user");
-const productModel = require("./models/product")
-const jwt = require('jsonwebtoken');
-const {validateUser, validate} = require("./middlewares/validator");
+const productModel = require("./models/product");
+const userRoute = require("./routes/userRouter");
+const productRoute = require("./routes/productRouter");
+const jwt = require("jsonwebtoken");
+const { validateUser, validate } = require("./middlewares/validator");
 const mailer = require("./mailer/mail");
-const cors = require('cors');
-require('dotenv').config();
-const db = require ('./db');
-const userRoute = require('./routes/userRouter');
-
+const cors = require("cors");
+require("dotenv").config();
+const db = require("./db");
 
 const PORT = process.env.PORT || 3000;
 const mongoose = require("mongoose");
 
 const app = express();
-
 
 const corsOptions = {
   origin: `http://localhost:${PORT}`
@@ -85,7 +84,10 @@ app.get("/test/:id/verify/:token", async (req, res) => {
     console.log(err.message);
   }
 });
+app.use(userRoute);
+app.use(userRoute);
 
+<<<<<<< HEAD
 
 
 app.post("/user/login", async(req, res) => {
@@ -158,10 +160,15 @@ app.get('/products-by-categories', async(req, res) => {
     res.status(400).send({ error: err })
   }
 })
+=======
+app.use(userRoute);
+>>>>>>> refs/remotes/origin/main
 
+app.use(productRoute);
 
+app.use(productRoute);
+app.use(productRoute);
 
 app.listen(PORT, () => {
   console.log(`running on port ${PORT}`);
 });
-
