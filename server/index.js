@@ -3,18 +3,26 @@ const crypto = require("crypto");
 const usertoken = require("./models/token");
 const userModel = require("./models/user");
 const {validateUser, validate} = require("./middlewares/validator")
-const jwt = require('jsonwebtoken')
+const jwt = require('jsonwebtoken');
+const cors = require('cors');
 require('dotenv').config();
-require ('./db')
+const db = require ('./db');
+
 
 const PORT = process.env.PORT || 3000;
 const mongoose = require("mongoose");
 const mailer = require("./mailer/mail");
-
 const app = express();
 
-app.use(express.json());
 
+const corsOptions = {
+  origin: `http://localhost:${3000}`
+}
+app.use(cors(corsOptions));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true}));
+
+db.on('error', console.error.bind(console, 'MongoDB connection error'));
 
 app.get("/pay", async (req, res) => {
   const https = require("https");
@@ -93,6 +101,7 @@ app.post("/user/login", async(req, res) => {
     console.log(err.message);
   }
 })
+
 
 
 app.post("/user", validateUser, validate, async (req, res) => {
