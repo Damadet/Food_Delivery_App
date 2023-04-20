@@ -87,7 +87,6 @@ app.get("/test/:id/verify/:token", async (req, res) => {
 app.use(userRoute);
 app.use(userRoute);
 
-<<<<<<< HEAD
 
 
 app.post("/user/login", async(req, res) => {
@@ -160,9 +159,6 @@ app.get('/products-by-categories', async(req, res) => {
     res.status(400).send({ error: err })
   }
 })
-=======
-app.use(userRoute);
->>>>>>> refs/remotes/origin/main
 
 app.use(productRoute);
 
