@@ -95,26 +95,6 @@ app.post("/user/login", async(req, res) => {
 })
 
 
-app.post("u", async (req, res) => {
-  const { Email, Password } = req.body;
-  try{
-    if(!Email.trim() || !Password.trim()) return res.status(400).send("email or password is missing");
-
-    const user = await userModel.findOne({ email: req.body.Email });
-    if(!user) return res.status(400).send('User not found');
-    const isMatched = await user.comparePassword(Password)
-    if(!isMatched) return res.status(409).send('Wrong email/password');
-
-    const token = jwt.sign({userId: user._id}, process.env.JWT_SECRET, {
-      expiresIn: '1d'
-    }) 
-    res.json({success: true, user: {email: user.email, name: user.Name}})
-  }catch (err) {
-    console.log(err.message);
-  }
-
-})
-
 app.post("/user", validateUser, validate, async (req, res) => {
   const { firstName, lastName, Email, Password } = req.body;
   try {
