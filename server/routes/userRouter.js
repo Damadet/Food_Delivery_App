@@ -1,9 +1,15 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const userModel = require('../models/user')
-const jwt = require('jsonwebtoken');
-const {validateUser, validate} = require("../middlewares/validator")
+const userModel = require("../models/user");
+const jwt = require("jsonwebtoken");
+const { validateUser, validate } = require("../middlewares/validator");
 const mailer = require("../mailer/mail");
+const bcrypt = require("bcrypt");
+
+router.get("/", async (req, res) => {
+  const users = await userModel.find();
+  res.send(users);
+});
 
 router.post("/user", validateUser, validate, async (req, res) => {
   const { firstName, lastName, Email, Password } = req.body;
@@ -40,25 +46,31 @@ router.post("/user", validateUser, validate, async (req, res) => {
   }
 });
 
-router.post("/user/login", async(req, res) => {
+router.post("/user/login", async (req, res) => {
   const { Email, Password } = req.body;
-  try{
-    if(!Email.trim() || !Password.trim()) return res.status(400).send("email or password is missing");
+  try {
+    if (!Email.trim() || !Password.trim())
+      return res.status(400).send("email or password is missing");
 
-    const user = await userModel.findOne({ email: req.body.Email })
-    if(!user) return res.status(409).send('User not found');
-    const isMatched = await user.comparePassword(Password)
-    if(!isMatched) return res.status(409).send('Wrong email/password');
+    const user = await userModel.findOne({ email: req.body.Email });
+    if (!user) return res.status(409).send("User not found");
+    const isMatched = await bcrypt.compare(user.password, Password);
+    if (!isMatched) return res.status(409).send("Wrong email/password");
 
-    const token = jwt.sign({userId: user._id}, process.env.JWT_SECRET, {
-      expiresIn: '1d'
-    })
-    
-    res.json({email: Email, password: Password, fname: user.first_name, lname: user.last_name, token: token});
-  }catch(err){
+    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
+      expiresIn: "1d",
+    });
+
+    res.json({
+      email: Email,
+      password: Password,
+      fname: user.first_name,
+      lname: user.last_name,
+      token: token,
+    });
+  } catch (err) {
     console.log(err.message);
   }
-})
+});
 
-
-module.exports = router
+module.exports = router;
