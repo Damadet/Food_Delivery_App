@@ -2,25 +2,28 @@ const express = require("express");
 const crypto = require("crypto");
 const usertoken = require("./models/token");
 const userModel = require("./models/user");
-const {validateUser, validate} = require("./middlewares/validator")
-const jwt = require('jsonwebtoken');
-const cors = require('cors');
-require('dotenv').config();
-const db = require ('./db');
-
+const productModel = require("./models/product");
+const userRoute = require("./routes/userRouter");
+const productRoute = require("./routes/productRouter");
+const jwt = require("jsonwebtoken");
+const { validateUser, validate } = require("./middlewares/validator");
+const mailer = require("./mailer/mail");
+const cors = require("cors");
+require("dotenv").config();
+const db = require("./db");
 
 const PORT = process.env.PORT || 3000;
 const mongoose = require("mongoose");
-const mailer = require("./mailer/mail");
+
 const app = express();
 
-
 const corsOptions = {
-  origin: `http://localhost:${3000}`
+  origin: `http://localhost:${PORT}`
 }
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true}));
+app.use('/use', userRoute);
 
 db.on('error', console.error.bind(console, 'MongoDB connection error'));
 
@@ -81,6 +84,10 @@ app.get("/test/:id/verify/:token", async (req, res) => {
     console.log(err.message);
   }
 });
+app.use(userRoute);
+app.use(userRoute);
+
+
 
 app.post("/user/login", async(req, res) => {
   const { Email, Password } = req.body;
@@ -104,40 +111,59 @@ app.post("/user/login", async(req, res) => {
 
 
 
-app.post("/user", validateUser, validate, async (req, res) => {
-  const { firstName, lastName, Email, Password } = req.body;
+
+app.get('/products', async (req, res) => {
+  try{
+    const products = await productModel.find()
+    res.status(200).send({ data: products})
+  } catch (err){
+    res.status(400).send({ error: err })
+  }
+})
+
+app.post("/addProduct", async (req, res) => {
+  const { Name, Adjective, Description, Price, Category } = req.body;
   try {
-    let user = await userModel.findOne({ email: req.body.Email });
-    if (user) {
-      return res.status(409).send("user with given email already exists");
+    let product = await productModel.findOne({ name: req.body.Name });
+    if (product) {
+      return res.status(409).send("product with given name already exists");
     }
-    user = await new userModel({
-      first_name: firstName,
-      last_name: lastName,
-      email: Email,
-      password: Password,
+    
+    product = await new productModel({
+      name: Name,
+      adjective: Adjective,
+      description: Description,
+      price: Price,
+      category: Category
     });
-    await user.save();
-    res.send(user);
+    await product.save();
+    res.send(product);
 
-    const token = await new usertoken({
-      userld: user._id,
-      token: crypto.randomBytes(32).toString("hex"),
-    });
-    token.save();
-    const url = `http://localhost:${PORT}/test/${user._id}/verify/${token.token}`;
-    const message = {
-      from: "okoliechukwuebukathereson@gmail.com",
-      to: Email,
-      subject: "user verification",
-      html: url,
-    };
-
-    await mailer.sendMail(message);
   } catch (err) {
     console.log(err.message);
   }
 });
+
+app.get('/products-by-categories', async(req, res) => {
+  try{
+    const products = await productModel.aggregate([
+      { $match: {}},
+      { $group: {
+        _id: '$category',
+        products: { $push: '$$ROOT'}
+      }},
+      { $project: {name: '$_id', products: 1, _id: 0}}
+    ])
+    res.status(200).send({ data: products})
+  } catch (err) {
+    res.status(400).send({ error: err })
+  }
+})
+
+app.use(productRoute);
+
+app.use(productRoute);
+app.use(productRoute);
 
 app.listen(PORT, () => {
   console.log(`running on port ${PORT}`);

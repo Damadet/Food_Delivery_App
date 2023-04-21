@@ -21,6 +21,8 @@
     "nodemon": "^2.0.22"
   },
   "devDependencies": {
-    "jsonwebtoken": "^9.0.0"
+    "@faker-js/faker": "^7.6.0",
+    "jsonwebtoken": "^9.0.0",
+    "lodash": "^4.17.21"
   }
 }

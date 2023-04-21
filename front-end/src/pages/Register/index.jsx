@@ -16,7 +16,7 @@ const Register = () => {
         setLoading(true);
         const authentication = getAuth();
         let uid = '';
-        createUserWithEmailAndPassword(authentication, data.email, data.password)
+        createUserWithEmailAndPassword(authentication, data.firstName, data.lastName, data.Email, data.Password)
             .then((response) => {
                 uid = response.user.uid;
                 sessionStorage.setItem('User Id', uid);
@@ -35,8 +35,10 @@ const Register = () => {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    email: data.email,
-                    name: data.name,
+                    firstName: data.firstName,
+                    lastName: data.lastName,
+                    Email: data.email,
+                    Password: data.Password,
                     _id: uid
                 })
             }).then((response) => {
