@@ -2,7 +2,7 @@ import clsx from "clsx";
 
 function getClassName({ className}) {
     return clsx(
-        'text-white text-lg font-bold rounded-xl transition duration-300 cursor-pointer focus:outline-none focus:ring-2 focus:ring-opacity-50',
+        'text-black text-lg font-bold rounded-xl transition duration-300 cursor-pointer focus:outline-none focus:ring-2 focus:ring-opacity-50',
         className
     )
 }
