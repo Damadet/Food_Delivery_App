@@ -73,7 +73,7 @@ const Register = () => {
                     <div>
                         <label 
                         htmlFor="name"
-                        className="block text-lg font-medium text-gray-200">Name</label>
+                        className="block text-lg font-medium text-gray-200">First Name</label>
                         <input 
                         {...register('name')}
                         id="name"
@@ -81,6 +81,20 @@ const Register = () => {
                         className="block appearance-none w-full px-3 py-2 border border-gray-300 roundedn-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-gray-200 focus:border-gray-200"
                         />
                     </div>
+
+                    <div>
+                        <label 
+                        htmlFor="name"
+                        className="block text-lg font-medium text-gray-200">Last Name</label>
+                        <input 
+                        {...register('name')}
+                        id="name"
+                        type="text"
+                        className="block appearance-none w-full px-3 py-2 border border-gray-300 roundedn-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-gray-200 focus:border-gray-200"
+                        />
+                    </div>
+
+
                     <div>
                         <label 
                         htmlFor="email"
