@@ -11,6 +11,25 @@ router.get("/", async (req, res) => {
   res.send(users);
 });
 
+router.post('/create-user', (req, res) => {
+  const user = new userModel({
+    first_name: req.body.firstName,
+    last_name: req.body.lastName,
+    password: req.body.Password,
+    email: req.body.Email,
+    _id: req.body._id,
+})
+
+  user.save()
+    .then(() => {
+      console.log('User saved successfully');
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+    res.status(200).send(user)
+})
+
 // router.post("/create-user", validateUser, validate, async (req, res) => {
 //   const { firstName, lastName, Email, Password, confirmPassword } = req.body;
 //   try {

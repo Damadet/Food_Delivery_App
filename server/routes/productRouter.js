@@ -1,10 +1,10 @@
 const express = require("express");
 const router = express.Router();
-const Product = require("../models/product");
+const productModel = require("../models/product");
 
 router.get("/products", async (req, res) => {
   try {
-    const products = await Product.find();
+    const products = await productModel.find();
     res.status(200).send({ data: products });
   } catch (err) {
     res.status(400).send({ error: err });
@@ -46,7 +46,7 @@ router.get("/products-by-categories", async (req, res) => {
     ]);
     res.status(200).send({ data: products });
   } catch (err) {
-    res.status(400).send({ error: err });
+    res.status(400).send(err.message);
   }
 });
 
