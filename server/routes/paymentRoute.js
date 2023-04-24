@@ -40,4 +40,45 @@ router.get("/pay", async (req, res) => {
   reqpay.end();
 });
 
+router.post('/create-payment-intent', async(req, res) => {
+  try {
+    const { orderItems, shippingAddress, userId } = req.body;
+    console.log(shippingAddress);
+
+    const totalPrice = calculateOrderAmount(orderItems);
+
+    const taxPrice = 0;
+    const shippingPrice = 0;
+
+    const order = new Order({
+
+      orderItems,
+      shippingAddress,
+      paymentMethod: 'stripe',
+      totalPrice,
+      taxPrice,
+      shippingPrice,
+      user: ''
+    })
+
+    // await order.save();
+
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: totalPrice,
+      currency: 'usd'
+    })
+
+    res.send({
+      clientSecret: paymentIntent.client_secret
+    })
+  } catch(e) {
+      res.status(400).json({
+        error: {
+          message: e.message
+        }
+      })
+  }
+})
+
+
 module.exports = router;

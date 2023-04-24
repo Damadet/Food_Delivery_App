@@ -1,10 +1,12 @@
 const express = require("express");
+const crypto = require("crypto");
 const router = express.Router();
 const userModel = require("../models/user");
 const jwt = require("jsonwebtoken");
 const { validateUser, validate } = require("../middlewares/validator");
 const mailer = require("../mailer/mail");
 const bcrypt = require("bcrypt");
+const usertoken = require("../models/token");
 
 router.get("/", async (req, res) => {
   const users = await userModel.find();
