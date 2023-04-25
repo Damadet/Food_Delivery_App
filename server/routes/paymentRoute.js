@@ -1,5 +1,5 @@
 const express = require("express");
-
+const Order = require("../models/order");
 const router = express.Router();
 
 router.get("/pay", async (req, res) => {
@@ -61,11 +61,11 @@ router.post('/create-payment-intent', async(req, res) => {
       user: ''
     })
 
-    // await order.save();
+    await order.save();
 
     const paymentIntent = await stripe.paymentIntents.create({
       amount: totalPrice,
-      currency: 'usd'
+      currency: 'ngn'
     })
 
     res.send({

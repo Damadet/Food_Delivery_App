@@ -16,7 +16,7 @@ const ProductSchema = new Schema(
     adjective: {type: String, required: true},
     description: {type: String, required: true},
     price:{type: String, required: true},
-    category: {type: String, required: true},
+    category: {type: Object, required: true},
   }
 )
 
