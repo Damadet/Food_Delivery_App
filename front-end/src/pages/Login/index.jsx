@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import Button from "../../components/elements/Button";
-import { app } from "../../firebase-config";
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+// import { app } from "../../firebase-config";
+// import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -14,38 +14,70 @@ const Login = () => {
 
     const onSubmit = (data) => {
         setLoading(true);
-        const authentication = getAuth();
-        let uid = '';
-        signInWithEmailAndPassword(authentication, data.email, data.password)
-            .then((response) => {
-                uid = response.user.uid;
-                sessionStorage.setItem('User Id', uid);
-                sessionStorage.setItem('Auth token', response._tokenResponse.refreshToken)
-                window.dispatchEvent(new Event("storage"))
-                setLoading(false);
-                toast.success('Successful Login!🎉', {
-                    position: "top-right",
-                    autoClose: 5000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    progress: undefined,
-                    theme: 'dark'
-                    });
-                navigate('/');
-            })
-            .catch((error) => {
-                if (error.code === 'auth/wrong-password') {
-                    toast.error('Wrong Password')
-                }
-                if (error.code === 'auth/user-not-found') {
-                    toast.error('Email not found, please registe')
-                }
-                setLoading(false);
-            })
+    //     const authentication = getAuth();
+    //     let uid = '';
+    //     signInWithEmailAndPassword(authentication, data.email, data.password)
+    //         .then((response) => {
+    //             uid = response.user.uid;
+    //             sessionStorage.setItem('User Id', uid);
+    //             sessionStorage.setItem('Auth token', response._tokenResponse.refreshToken)
+    //             window.dispatchEvent(new Event("storage"))
+    //             setLoading(false);
+    //             toast.success('Successful Login!🎉', {
+    //                 position: "top-right",
+    //                 autoClose: 5000,
+    //                 hideProgressBar: false,
+    //                 closeOnClick: true,
+    //                 pauseOnHover: true,
+    //                 draggable: true,
+    //                 progress: undefined,
+    //                 theme: 'dark'
+    //                 });
+    //             navigate('/');
+    //         })
+    //         .catch((error) => {
+    //             if (error.code === 'auth/wrong-password') {
+    //                 toast.error('Wrong Password')
+    //             }
+    //             if (error.code === 'auth/user-not-found') {
+    //                 toast.error('Email not found, please registe')
+    //             }
+    //             setLoading(false);
+    //         })
     
-    }
+    // }
+    fetch('http://localhost:8080/api/login', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            Email: data.email,
+            Password: data.password
+        })
+    }).then((response) => {
+        if (response.status === 200) {
+            setLoading(false);
+            toast.success('Login successful!🎉', {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: 'dark'
+            });
+            navigate('/');
+        } else {
+            console.log(response.json());
+        }
+    }).catch((error) => {
+        setLoading(false);
+        console.log(error)
+    })
+}
+
     return (
         <div className="h-screen bg-black flex  items-center justify-center">
             <div className="rounded-lg max-w-md w-full flex flex-col items-center justify-center relative">

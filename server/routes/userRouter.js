@@ -80,7 +80,7 @@ router.post('/create-user', validateUser, validate, async (req, res) => {
 //   }
 // });
 
-router.post("/user/login", async (req, res) => {
+router.post("/login", async (req, res) => {
   const { Email, Password } = req.body;
   try {
     if (!Email.trim() || !Password.trim())
@@ -91,7 +91,8 @@ router.post("/user/login", async (req, res) => {
 
     //encrypts the password and compares it to the encrypted one in the database
     const isMatched = await bcrypt.compare(Password, user.password,);
-    if (!isMatched) return res.status(409).send("Wrong email/password");
+    if (!isMatched) return res.status(400).send("Wrong email/password");
+
 
     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
       expiresIn: "1d",
@@ -101,14 +102,13 @@ router.post("/user/login", async (req, res) => {
       httpOnly: true,
     })
 
-    return res.redirect('/');
 
-    // res.status(200).json({
-    //   email: Email,
-    //   fname: user.first_name,
-    //   lname: user.last_name,
-    //   token: token,
-    // });
+    res.status(200).json({
+      email: Email,
+      fname: user.first_name,
+      lname: user.last_name,
+      token: token,
+    });
   } catch (err) {
     console.log(err.message);
   }
