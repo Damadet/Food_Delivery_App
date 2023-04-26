@@ -72,11 +72,11 @@ const Register = () => {
                 <form className="w-full space-y-6" onSubmit={handleSubmit(onSubmit)}>
                     <div>
                         <label 
-                        htmlFor="name"
+                        htmlFor="firstName"
                         className="block text-lg font-medium text-gray-200">First Name</label>
                         <input 
-                        {...register('name')}
-                        id="name"
+                        {...register('firstName')}
+                        id="firstName"
                         type="text"
                         className="block appearance-none w-full px-3 py-2 border border-gray-300 roundedn-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-gray-200 focus:border-gray-200"
                         />
@@ -84,11 +84,11 @@ const Register = () => {
 
                     <div>
                         <label 
-                        htmlFor="name"
+                        htmlFor="lastName"
                         className="block text-lg font-medium text-gray-200">Last Name</label>
                         <input 
-                        {...register('name')}
-                        id="name"
+                        {...register('lastName')}
+                        id="lastName"
                         type="text"
                         className="block appearance-none w-full px-3 py-2 border border-gray-300 roundedn-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-gray-200 focus:border-gray-200"
                         />
