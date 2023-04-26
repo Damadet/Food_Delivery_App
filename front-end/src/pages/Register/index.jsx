@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import Button from "../../components/elements/Button";
-import { app } from "../../firebase-config";
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+// import { app } from "../../firebase-config";
+// import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -14,54 +14,38 @@ const Register = () => {
 
     const onSubmit = (data) => {
         setLoading(true);
-        const authentication = getAuth();
-        let uid = '';
-        createUserWithEmailAndPassword(authentication, data.firstName, data.lastName, data.Email, data.Password)
-            .then((response) => {
-                uid = response.user.uid;
-                sessionStorage.setItem('User Id', uid);
-                sessionStorage.setItem('Auth token', response._tokenResponse.refreshToken)
-                window.dispatchEvent(new Event("storage"))
+        fetch('http://localhost:8080/api/create-user', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                firstName: data.firstName,
+                lastName: data.lastName,
+                Email: data.email,
+                Password: data.password
             })
-            .catch((error) => {
-                if (error.code === 'auth/email-already-in-use') {
-                    toast.error('Email Already In Use')
-                }
-            })
-        
-            fetch('http://localhost:8080/api/create-user', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    firstName: data.firstName,
-                    lastName: data.lastName,
-                    Email: data.email,
-                    Password: data.Password,
-                    _id: uid
-                })
-            }).then((response) => {
-                if (response.status === 200) {
-                    setLoading(false);
-                    toast.success('Account created successfully!🎉', {
-                        position: "top-right",
-                        autoClose: 5000,
-                        hideProgressBar: false,
-                        closeOnClick: true,
-                        pauseOnHover: true,
-                        draggable: true,
-                        progress: undefined,
-                        theme: 'dark'
-                        });
-                    navigate('/');
-                } else {
-                    console.log(response.json());
-                }
-            }).catch((error) => {
+        }).then((response) => {
+            if (response.status === 200) {
                 setLoading(false);
-                console.log(error)
-            })
+                toast.success('Account created successfully!🎉', {
+                    position: "top-right",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: 'dark'
+                });
+                navigate('/login');
+            } else {
+                console.log(response.json());
+            }
+        }).catch((error) => {
+            setLoading(false);
+            console.log(error)
+        })
     }
     return (
         <div className="h-screen bg-black flex  items-center justify-center">
@@ -112,7 +96,7 @@ const Register = () => {
                         className="block text-lg font-medium text-gray-200">Password</label>
                         <input 
                         {...register('password')}
-                        id="password"
+                        id="Password"
                         type="password"
                         className="block appearance-none w-full px-3 py-2 border border-gray-300 roundedn-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-gray-200 focus:border-gray-200"
                         />

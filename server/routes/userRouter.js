@@ -97,12 +97,18 @@ router.post("/user/login", async (req, res) => {
       expiresIn: "1d",
     });
 
-    res.status(200).json({
-      email: Email,
-      fname: user.first_name,
-      lname: user.last_name,
-      token: token,
-    });
+    res.cookie("token", token, {
+      httpOnly: true,
+    })
+
+    return res.redirect('/');
+
+    // res.status(200).json({
+    //   email: Email,
+    //   fname: user.first_name,
+    //   lname: user.last_name,
+    //   token: token,
+    // });
   } catch (err) {
     console.log(err.message);
   }
