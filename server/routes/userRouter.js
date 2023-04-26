@@ -13,13 +13,21 @@ router.get("/", async (req, res) => {
   res.send(users);
 });
 
-router.post('/create-user', (req, res) => {
-  const user = new userModel({
-    first_name: req.body.firstName,
-    last_name: req.body.lastName,
-    password: req.body.Password,
-    email: req.body.Email,
-    _id: req.body._id,
+router.post('/create-user', validateUser, validate, async (req, res) => {
+  const { firstName, lastName, Email, Password } = req.body;
+  try {
+    let User = await userModel.findOne({ email: req.body.Email });
+    if (User) {
+      return res.status(400).send("user with given email already exists");}
+      // if (!password === confirmPassword){
+      //   return res.status(400).send("Passwords need to match")
+      // }
+    const user = new userModel({
+      first_name: firstName,
+      last_name: lastName,
+      password: Password,
+      email: Email,
+      _id: req.body._id,
 })
 
   user.save()
@@ -30,7 +38,10 @@ router.post('/create-user', (req, res) => {
       console.error(error);
     });
     res.status(200).send(user)
-})
+} catch (err) {
+       console.log(err.message);
+     }
+    })
 
 // router.post("/create-user", validateUser, validate, async (req, res) => {
 //   const { firstName, lastName, Email, Password, confirmPassword } = req.body;
@@ -69,31 +80,32 @@ router.post('/create-user', (req, res) => {
 //   }
 // });
 
-// router.post("/user/login", async (req, res) => {
-//   const { Email, Password } = req.body;
-//   try {
-//     if (!Email.trim() || !Password.trim())
-//       return res.status(400).send("email or password is missing");
+router.post("/user/login", async (req, res) => {
+  const { Email, Password } = req.body;
+  try {
+    if (!Email.trim() || !Password.trim())
+      return res.status(400).send("email or password is missing");
 
-//     const user = await userModel.findOne({ email: req.body.Email });
-//     if (!user) return res.status(409).send("User not found");
-//     const isMatched = await bcrypt.compare(user.password, Password);
-//     if (!isMatched) return res.status(409).send("Wrong email/password");
+    const user = await userModel.findOne({ email: req.body.Email });
+    if (!user) return res.status(400).send("User not found");
 
-//     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
-//       expiresIn: "1d",
-//     });
+    //encrypts the password and compares it to the encrypted one in the database
+    const isMatched = await bcrypt.compare(Password, user.password,);
+    if (!isMatched) return res.status(409).send("Wrong email/password");
 
-//     res.json({
-//       email: Email,
-//       password: Password,
-//       fname: user.first_name,
-//       lname: user.last_name,
-//       token: token,
-//     });
-//   } catch (err) {
-//     console.log(err.message);
-//   }
-// });
+    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
+      expiresIn: "1d",
+    });
+
+    res.status(200).json({
+      email: Email,
+      fname: user.first_name,
+      lname: user.last_name,
+      token: token,
+    });
+  } catch (err) {
+    console.log(err.message);
+  }
+});
 
 module.exports = router;
