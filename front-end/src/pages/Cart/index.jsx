@@ -7,6 +7,7 @@ import { ReactComponent as ArrowRightSvg } from "../../assets/icons/arrow-right-
 import { AddressForm } from "../../components/AddressForm";
 import { ProductsSummary } from "../../components/ProductsSummary";
 import { StripeWrapper } from "../../components/PaymentForm";
+import { Header3 } from "../../components/Header3";
 
 const Cart = () => {
     const cart = useSelector(cartProducts);
@@ -20,23 +21,23 @@ const Cart = () => {
             </div>
         )
     }
-
     return (
-        <div className="bg-white h-screen text-black mx-auto mt-2 border border-gray-200 p-4 md:w-2/3 rounded-lg shadow-md sm:p-6 lg:p-8">
+
+        <><Header3 /><div className="bg-white h-screen text-black mx-auto mt-2 border border-gray-200 p-4 md:w-2/3 rounded-lg shadow-md sm:p-6 lg:p-8">
             <Tabs list={tabs} onTabSwitch={handleTabSwitch} activeTab={currentTab} />
             <div className={`tabs ${currentTab !== 'Summary' ? 'hidden' : ''}`}>
                 <ProductsSummary />
                 <div className="flex justify-end p-2">
-                    <Button variant="dark" className="flex items-center" onClick={()=>handleTabSwitch('Delivery')}><span className="mr-1">Next</span><ArrowRightSvg /></Button>
+                    <Button variant="dark" className="flex items-center" onClick={() => handleTabSwitch('Delivery')}><span className="mr-1">Next</span><ArrowRightSvg /></Button>
                 </div>
             </div>
             <div className={`tabs ${currentTab !== 'Delivery' ? 'hidden' : ''}`}>
-                <AddressForm onTabSwitch={handleTabSwitch}/>
+                <AddressForm onTabSwitch={handleTabSwitch} />
             </div>
             <div className={`tabs ${currentTab !== 'Payment' ? 'hidden' : ''}`}>
                 <StripeWrapper />
             </div>
-        </div>
+        </div></>
     )
 }
 
