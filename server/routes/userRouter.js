@@ -7,11 +7,10 @@ const { validateUser, validate } = require("../middlewares/validator");
 const mailer = require("../mailer/mail");
 require("dotenv").config();
 const bcrypt = require("bcrypt");
-const { checkAuth } = require("../middlewares/cookieJwtAuth");
 const usertoken = require("../models/token");
 const cookieparser = require("cookie-parser");
 
-router.get("/", checkAuth, async (req, res) => {
+router.get("/", async (req, res) => {
   const users = await userModel.find();
   res.send(users);
 });
@@ -62,7 +61,7 @@ router.post("/create-user", validateUser, validate, async (req, res) => {
   }
 });
 
-router.post("/user/login", checkAuth, async (req, res) => {
+router.post("/user/login", async (req, res) => {
   const { Email, Password } = req.body;
   try {
     if (!Email.trim() || !Password.trim())
