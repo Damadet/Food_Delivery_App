@@ -71,7 +71,7 @@ export const AddressForm = ({ onTabSwitch }) => {
                 </div>
             </div>
             <div className="flex justify-end p-2">
-                <Button variant="dark" className="flex items-center" type="submit"><span className="mr-1">Next</span><ArrowRightSvg /></Button>
+                <Button variant="light" className="flex items-center" type="submit"><span className="mr-1">Next</span><ArrowRightSvg /></Button>
             </div>
         </form>
     )

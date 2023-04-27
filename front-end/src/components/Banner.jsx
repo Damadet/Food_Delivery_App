@@ -11,15 +11,12 @@ export const Banner = () => {
                     Get Started Today!
                 </p>
                 <div className="btn-container">
-                    <Button>Order Now</Button>
-                    <a href="/menu" className="text-yellow-400 hover:text-yellow-500 font-bold text-decoration-line px-3">
+                    {/* <Button>Order Now</Button> */}
+                    <a href="/menu" className="text-yellow-400 hover:text-yellow-500 font-bold text-xl text-decoration-line px-3">
                         See Menu
                     </a>
 
         
-                    {/* <a href="/landingPage" className="text-yellow-400 hover:text-yellow-500 font-bold text-decoration-line px-3">
-                        LandingPage
-                    </a> */}
                     
                 </div>
             </div>

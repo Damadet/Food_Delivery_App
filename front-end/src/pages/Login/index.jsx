@@ -69,7 +69,7 @@ const Login = () => {
                 progress: undefined,
                 theme: 'dark'
             });
-            navigate('/');
+            navigate('/home');
         } else {
             console.log(response.json());
         }
@@ -106,7 +106,7 @@ const Login = () => {
                                 type="password"
                                 className="block appearance-none w-full px-3 py-2 border border-gray-300 roundedn-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-gray-200 focus:border-gray-200" />
                         </div>
-                        <Button size="large" variant='primary'>{loading ? "loading" : 'Register'}</Button>
+                        <Button variant='light' size="large">{loading ? "loading" : 'Register'}</Button>
                     </form>
                     <ToastContainer />
                 </div>

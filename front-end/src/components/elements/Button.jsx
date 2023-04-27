@@ -17,14 +17,14 @@ const variants = {
 primary: 'bg-marigold focus:ring-marigold',
 secondary: 'bg-tomato focus:ring-tomato',
 dark: 'bg-black focus:ring-white',
-light: 'bg-white'
+light: 'bg-yellow-50'
 };
 
 const Button = ({ 
     children,
     className,
     size = 'small',
-    variant = 'primary',
+    variant = 'light',
     ...rest
  }) => {
     return (

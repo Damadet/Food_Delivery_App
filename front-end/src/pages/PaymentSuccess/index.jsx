@@ -1,3 +1,4 @@
+import { Header2 } from "../../components/Header2";
 import { Alert } from "../../components/elements/Alert";
 const PaymentSuccess = () => {
     return (
