@@ -15,6 +15,12 @@ export const Banner = () => {
                     <a href="/menu" className="text-yellow-400 hover:text-yellow-500 font-bold text-decoration-line px-3">
                         See Menu
                     </a>
+
+        
+                    {/* <a href="/landingPage" className="text-yellow-400 hover:text-yellow-500 font-bold text-decoration-line px-3">
+                        LandingPage
+                    </a> */}
+                    
                 </div>
             </div>
             <div className="banner-image w-full md:w-1/2 p-3 flex justify-end">
