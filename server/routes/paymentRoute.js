@@ -1,12 +1,13 @@
 const express = require("express");
 const Order = require("../models/order");
 const router = express.Router();
+const paystack = require("../models/payment");
 
-router.get("/pay", async (req, res) => {
+router.post("create-payment-intent", async (req, res) => {
   const https = require("https");
   const params = JSON.stringify({
-    email: req.query.email,
-    amount: req.query.amount,
+    email: req.body.email,
+    amount: req.body.amount,
   });
 
   const options = {
@@ -40,7 +41,7 @@ router.get("/pay", async (req, res) => {
   reqpay.end();
 });
 
-router.post('/create-payment-intent', async(req, res) => {
+router.post("/create-payment-intent", async (req, res) => {
   try {
     const { orderItems, shippingAddress, userId } = req.body;
     console.log(shippingAddress);
@@ -51,34 +52,32 @@ router.post('/create-payment-intent', async(req, res) => {
     const shippingPrice = 0;
 
     const order = new Order({
-
       orderItems,
       shippingAddress,
-      paymentMethod: 'stripe',
+      paymentMethod: "stripe",
       totalPrice,
       taxPrice,
       shippingPrice,
-      user: ''
-    })
+      user: "",
+    });
 
     await order.save();
 
     const paymentIntent = await stripe.paymentIntents.create({
       amount: totalPrice,
-      currency: 'ngn'
-    })
+      currency: "ngn",
+    });
 
     res.send({
-      clientSecret: paymentIntent.client_secret
-    })
-  } catch(e) {
-      res.status(400).json({
-        error: {
-          message: e.message
-        }
-      })
+      clientSecret: paymentIntent.client_secret,
+    });
+  } catch (e) {
+    res.status(400).json({
+      error: {
+        message: e.message,
+      },
+    });
   }
-})
-
+});
 
 module.exports = router;
