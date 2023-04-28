@@ -21,7 +21,7 @@ const createtoken = (id) => {
 };
 
 router.post("/create-user", validateUser, validate, async (req, res) => {
-  const { firstName, lastName, Email, Password, confirmPassword } = req.body;
+  const { firstName, lastName, Email, Password} = req.body;
   try {
     let user = await userModel.findOne({ email: req.body.Email });
     if (user) {
@@ -36,7 +36,7 @@ router.post("/create-user", validateUser, validate, async (req, res) => {
     await user.save();
     res.send(user);
 
-    const auth = createtoken(user_id);
+    const auth = createtoken(user._id);
     res.cookie("jwt", auth);
 
     const token = await new usertoken({
@@ -71,7 +71,7 @@ router.post("/login", async (req, res) => {
     const isMatched = await bcrypt.compare(Password, user.password);
     if (!isMatched) return res.status(409).send("Wrong email/password");
 
-    const token = createtoken(user_id);
+    const token = createtoken(user._id);
     res.cookie("jwt", token);
 
     res.status(200).json({
