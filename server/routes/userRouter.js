@@ -9,6 +9,7 @@ require("dotenv").config();
 const bcrypt = require("bcrypt");
 const usertoken = require("../models/token");
 const cookieparser = require("cookie-parser");
+const tokenmodel = require("../models/token");
 
 router.get("/", async (req, res) => {
   const users = await userModel.find();
@@ -39,7 +40,7 @@ router.post("/create-user", validateUser, validate, async (req, res) => {
     await user.save();
     res.send(user);
 
-    const auth = createtoken(user_id);
+    const auth = createtoken(user._id);
     res.cookie("jwt", auth);
 
     const token = await new usertoken({
@@ -56,6 +57,25 @@ router.post("/create-user", validateUser, validate, async (req, res) => {
     };
 
     await mailer.sendMail(message);
+  } catch (err) {
+    console.log(err.message);
+  }
+});
+router.get("/:userid/verify/:token", async (req, res) => {
+  try {
+    const user = await userModel.findOne({ _id: req.params.userid });
+    if (!user) {
+      return res.status(400).send("invalid link");
+    }
+    const verifytoken = await tokenmodel.findOne({
+      userid: user._id,
+      tokenid: req.params.token,
+    });
+    if (!verifytoken) {
+      return res.status(400).send("invalid link");
+    }
+    await user.updateOne({ _id: user._id, verified: true });
+    await verifytoken.remove();
   } catch (err) {
     console.log(err.message);
   }

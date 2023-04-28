@@ -1,17 +1,21 @@
 const jwt = require("jsonwebtoken");
+require("dotenv").config();
 
-const cookieJwtAuth = (req, res, next) => {
-  const token = req.cookies.token;
-  try {
-    const user = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = user;
-    next();
-  } catch (err) {
-    res.clearCookie("token");
-    return res.redirect("/login");
+const checkAuth = (req, res, next) => {
+  const token = req.cookies.jwt;
+  if (token) {
+    jwt.verify(token, process.env.JWT_SECRET, (err, decode) => {
+      if (err) {
+        console.log(err.message);
+        res.redirect("/user/login");
+      } else {
+        console.log(decoded);
+        next();
+      }
+    });
+  } else {
+    res.redirect("/user/login");
   }
 };
 
-module.exports = {
-  cookieJwtAuth,
-};
+module.exports = { checkAuth };
