@@ -95,7 +95,7 @@ const Register = () => {
                                 className="block text-lg font-medium text-gray-200">Password</label>
                             <input
                                 {...register('password')}
-                                id="Password"
+                                id="password"
                                 type="password"
                                 className="block appearance-none w-full px-3 py-2 border border-gray-300 roundedn-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-gray-200 focus:border-gray-200" />
                         </div>

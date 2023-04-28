@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Header2 } from "../../components/Header2";
+import Button from "../../components/elements/Button";
 
 const AddProducts = () => {
   let navigate = useNavigate();
