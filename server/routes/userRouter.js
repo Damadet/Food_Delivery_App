@@ -58,7 +58,7 @@ router.post("/create-user", validateUser, validate, async (req, res) => {
   }
 });
 
-router.post("/user/login", async (req, res) => {
+router.post("/login", async (req, res) => {
   const { Email, Password } = req.body;
   try {
     if (!Email.trim() || !Password.trim())
