@@ -69,7 +69,7 @@ router.post("/login", async (req, res) => {
 
     //encrypts the password and compares it to the encrypted
     const isMatched = await bcrypt.compare(Password, user.password);
-    if (!isMatched) return res.status(409).send("Wrong email/password");
+    if (!isMatched) return res.status(401).send("Wrong email/password");
 
     const token = createtoken(user._id);
     res.cookie("jwt", token);
