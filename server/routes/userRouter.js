@@ -62,17 +62,17 @@ router.get("/:userid/verify/:token", async (req, res) => {
   try {
     const user = await userModel.findOne({ _id: req.params.userid });
     if (!user) {
-      return res.status(400).send("invalid link");
+      return res.status(400).send("invalid userlink");
     }
-    const verifytoken = await tokenmodel.findOne({
-      userid: user._id,
-      tokenid: req.params.token,
+    const verifytoken = await usertoken.findOne({
+      userld: user._id,
+      token: req.params.token,
     });
     if (!verifytoken) {
-      return res.status(400).send("invalid link");
+      return res.status(400).send("invalid tokenlink");
     }
     await user.updateOne({ _id: user._id, verified: true });
-    await verifytoken.remove();
+    await tokenmodel.deleteOne({ token: req.params.token });
     res.send("email verification complete");
   } catch (err) {
     console.log(err.message);
@@ -87,6 +87,10 @@ router.post("/login", async (req, res) => {
 
     const user = await userModel.findOne({ email: req.body.Email });
     if (!user) return res.status(400).send("User not found");
+
+    if (user.verified === false) {
+      return res.status(400).send("please complete registration");
+    }
 
     //encrypts the password and compares it to the encrypted
     const isMatched = await bcrypt.compare(Password, user.password);

@@ -26,6 +26,7 @@ app.use("/api/", paymentRoute);
 app.use("/api/", userRoute);
 
 app.use("/api/", productRoute);
+app.use(userRoute);
 
 app.listen(PORT, () => {
   console.log(`running on port ${PORT}`);
