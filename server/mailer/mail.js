@@ -16,6 +16,6 @@ const message = {
   html: "hello from server",
 };
 
-transporter.sendMail(message);
+// transporter.sendMail();
 
-module.exports = transporter;
+module.exports = { transporter };

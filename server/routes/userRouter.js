@@ -4,11 +4,12 @@ const router = express.Router();
 const userModel = require("../models/user");
 const jwt = require("jsonwebtoken");
 const { validateUser, validate } = require("../middlewares/validator");
-const mailer = require("../mailer/mail");
+const { transporter } = require("../mailer/mail");
 require("dotenv").config();
 const bcrypt = require("bcrypt");
 const usertoken = require("../models/token");
 const cookieparser = require("cookie-parser");
+const tokenmodel = require("../models/token");
 
 router.get("/", async (req, res) => {
   const users = await userModel.find();
@@ -21,7 +22,7 @@ const createtoken = (id) => {
 };
 
 router.post("/create-user", validateUser, validate, async (req, res) => {
-  const { firstName, lastName, Email, Password} = req.body;
+  const { firstName, lastName, Email, Password } = req.body;
   try {
     let user = await userModel.findOne({ email: req.body.Email });
     if (user) {
@@ -34,8 +35,6 @@ router.post("/create-user", validateUser, validate, async (req, res) => {
       password: Password,
     });
     await user.save();
-    res.send(user);
-
     const auth = createtoken(user._id);
     res.cookie("jwt", auth);
 
@@ -43,8 +42,9 @@ router.post("/create-user", validateUser, validate, async (req, res) => {
       userld: user._id,
       token: crypto.randomBytes(32).toString("hex"),
     });
+    const PORT = 8080;
     token.save();
-    const url = `http://localhost:${PORT}/test/${user._id}/verify/${token.token}`;
+    const url = `http://localhost:${PORT}/${user._id}/verify/${token.token}`;
     const message = {
       from: "okoliechukwuebukathereson@gmail.com",
       to: Email,
@@ -52,7 +52,28 @@ router.post("/create-user", validateUser, validate, async (req, res) => {
       html: url,
     };
 
-    await mailer.sendMail(message);
+    await transporter.sendMail(message);
+    res.send(user);
+  } catch (err) {
+    console.log(err.message);
+  }
+});
+router.get("/:userid/verify/:token", async (req, res) => {
+  try {
+    const user = await userModel.findOne({ _id: req.params.userid });
+    if (!user) {
+      return res.status(400).send("invalid link");
+    }
+    const verifytoken = await tokenmodel.findOne({
+      userid: user._id,
+      tokenid: req.params.token,
+    });
+    if (!verifytoken) {
+      return res.status(400).send("invalid link");
+    }
+    await user.updateOne({ _id: user._id, verified: true });
+    await verifytoken.remove();
+    res.send("email verification complete");
   } catch (err) {
     console.log(err.message);
   }
