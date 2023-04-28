@@ -88,9 +88,9 @@ router.post("/login", async (req, res) => {
     const user = await userModel.findOne({ email: req.body.Email });
     if (!user) return res.status(400).send("User not found");
 
-    if (user.verified === false) {
-      return res.status(400).send("please complete registration");
-    }
+    // if (user.verified === false) {
+    //   return res.status(400).send("please complete registration");
+    // }
 
     //encrypts the password and compares it to the encrypted
     const isMatched = await bcrypt.compare(Password, user.password);
