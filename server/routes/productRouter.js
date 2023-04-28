@@ -3,6 +3,10 @@ const router = express.Router();
 const productModel = require("../models/product");
 const { MongoClient } = require("mongodb");
 const categoryModel = require("../models/category");
+const mongoose = require("mongoose")
+
+const uri = "mongodb+srv://user:alxpassword@cluster1.h6pxllx.mongodb.net/?retryWrites=true&w=majority";
+const client = new MongoClient(uri);
 
 router.get("/products", async (req, res) => {
   try {
@@ -56,8 +60,9 @@ router.post("/addProduct", async (req, res) => {
     if (product) {
       return res.status(409).send("product with given name already exists");
     }
-    cate = await categoryModel.findOne({ name: Category });
     await client.connect();
+    
+    cate = await categoryModel.findOne({ name: Category });
     const productsCollection = client.db("test").collection("products");
 
     let newProduct = {
