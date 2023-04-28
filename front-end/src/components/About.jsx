@@ -9,7 +9,7 @@ export const About = () => {
                     <h2 className="text-2xl font-medium">About Us</h2>
                     <br />
                     <p className="text-lg">
-                    Yummy Request was established in 2023 as a result of the need to bridge the gap between purchasing quality homemade delicacies and avail
+                    Yummy Request was established in 2023 as a result of the need to bridge the gap between purchasing quality homemade delicacies and quick, reliable delivery.
                     Our menu includes crisp, tasty, home-made Nigerian traditional delicacies and intercontinental dishes. Our food is solid and YUMMY. We offer a broad range of traditional and intercontinental menu to make the best choices.
                     Make a order and try us out! We will come to you! 
                     <br/>
