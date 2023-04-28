@@ -5,13 +5,12 @@ import Login from "../pages/Login";
 import Register from "../pages/Register";
 import Menu from "../pages/Menu";
 import Cart from "../pages/Cart";
-import AddProducts from "../pages/AddProducts"
+import AddProduct from "../pages/AddProducts"
 import LandingPage from "../pages/LandingPage";
 import PaymentSuccess from "../pages/PaymentSuccess";
 import { useSelector } from "react-redux";
 import { cartProducts } from "../stores/cart/cartSlice";
 import { Footer } from "../components/Footer";
-import { AddProduct } from "../components/AddProduct";
 
 const Navigation = () => {
     // const productsInCart = useSelector(cartProducts);
@@ -27,7 +26,7 @@ const Navigation = () => {
                 <Route path="/cart" element={<Cart />} />
                 <Route path="/payment-success" element={<PaymentSuccess />} />
                 <Route path="/" element={<LandingPage />} />
-                <Route path="/addProduct" element={<AddProducts />} />
+                <Route path="/addProducts" element={<AddProduct />} />
             </Routes>
             <Footer />
         </BrowserRouter>
