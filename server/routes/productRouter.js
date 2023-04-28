@@ -11,6 +11,21 @@ router.get("/products", async (req, res) => {
   }
 });
 
+//update a product
+router.put('/products/:id', async(req, res) => {
+  try{
+    const {id} = req.params;
+    const product = await productModel.findByIdAndUpdate(id, req.body);
+    if(!product){
+      return res.status(404).send("Cannot find product with name")
+    }
+    const updatedProduct = await productModel.findById(id)
+    res.status(200).json(updatedProduct);
+  }catch (err){
+    res.status(500).send(err.message)
+  }
+})
+
 router.post("/addProduct", async (req, res) => {
   const { Name, Adjective, Description, Price, Category } = req.body;
   try {

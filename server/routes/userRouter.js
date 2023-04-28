@@ -27,9 +27,6 @@ router.post("/create-user", validateUser, validate, async (req, res) => {
     if (user) {
       return res.status(400).send("user with given email already exists");
     }
-    if (!password === confirmPassword) {
-      return res.status(400).send("Passwords need to match");
-    }
     user = await new userModel({
       first_name: firstName,
       last_name: lastName,
