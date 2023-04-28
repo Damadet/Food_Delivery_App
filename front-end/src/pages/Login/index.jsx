@@ -37,12 +37,12 @@ const Login = () => {
     //             navigate('/');
     //         })
     //         .catch((error) => {
-    //             if (error.code === 'auth/wrong-password') {
-    //                 toast.error('Wrong Password')
-    //             }
-    //             if (error.code === 'auth/user-not-found') {
-    //                 toast.error('Email not found, please registe')
-    //             }
+                // if (error.code === 'auth/wrong-password') {
+                //     toast.error('Wrong Password')
+                // }
+                // if (error.code === 'auth/user-not-found') {
+                //     toast.error('Email not found, please registe')
+                // }
     //             setLoading(false);
     //         })
     
@@ -74,8 +74,15 @@ const Login = () => {
             console.log(response.json());
         }
     }).catch((error) => {
+        if (error.message === 'Wrong email/password') {
+            console.log('wrong email or password')
+        }
+        // if (error.code === 'auth/user-not-found') {
+        //     toast.error('Email not found, please registe')
+        // }
+        
         setLoading(false);
-        console.log(error)
+        //toast.error(error)
     })
 }
 
