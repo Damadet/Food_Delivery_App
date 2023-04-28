@@ -22,14 +22,11 @@ const createtoken = (id) => {
 };
 
 router.post("/create-user", validateUser, validate, async (req, res) => {
-  const { firstName, lastName, Email, Password, confirmPassword } = req.body;
+  const { firstName, lastName, Email, Password} = req.body;
   try {
     let user = await userModel.findOne({ email: req.body.Email });
     if (user) {
       return res.status(400).send("user with given email already exists");
-    }
-    if (!password === confirmPassword) {
-      return res.status(400).send("Passwords need to match");
     }
     user = await new userModel({
       first_name: firstName,
@@ -81,7 +78,7 @@ router.get("/:userid/verify/:token", async (req, res) => {
   }
 });
 
-router.post("/user/login", async (req, res) => {
+router.post("/login", async (req, res) => {
   const { Email, Password } = req.body;
   try {
     if (!Email.trim() || !Password.trim())
@@ -94,7 +91,7 @@ router.post("/user/login", async (req, res) => {
     const isMatched = await bcrypt.compare(Password, user.password);
     if (!isMatched) return res.status(409).send("Wrong email/password");
 
-    const token = createtoken(user_id);
+    const token = createtoken(user._id);
     res.cookie("jwt", token);
 
     res.status(200).json({

@@ -1,7 +1,14 @@
 const express = require("express");
 const router = express.Router();
 const productModel = require("../models/product");
+<<<<<<< HEAD
 const { MongoClient } = require("mongodb");
+=======
+const categoryModel = require("../models/category");
+const MongoClient = require("mongodb").MongoClient;
+const uri = "mongodb+srv://user:alxpassword@cluster1.h6pxllx.mongodb.net/?retryWrites=true&w=majority";
+const client = new MongoClient(uri);
+>>>>>>> 7c8802cbe3ce8f5edcd753710aebdfe44f1514b0
 
 router.get("/products", async (req, res) => {
   try {
@@ -12,6 +19,7 @@ router.get("/products", async (req, res) => {
   }
 });
 
+<<<<<<< HEAD
 // router.post("/addProduct", async (req, res) => {
 //   const { Name, Adjective, Description, Price, Category } = req.body;
 //   try {
@@ -33,6 +41,59 @@ router.get("/products", async (req, res) => {
 //     console.log(err.message);
 //   }
 // });
+=======
+//update a product
+router.put('/products/:id', async(req, res) => {
+  try{
+    const {id} = req.params;
+    const product = await productModel.findByIdAndUpdate(id, req.body);
+    if(!product){
+      return res.status(404).send("Cannot find product with name")
+    }
+    const updatedProduct = await productModel.findById(id)
+    res.status(200).json(updatedProduct);
+  }catch (err){
+    res.status(500).send(err.message)
+  }
+})
+
+router.post("/addProduct", async (req, res) => {
+  const { Name, Adjective, Description, Price, Category, ImageUrl } = req.body;
+  try {
+    let product = await productModel.findOne({ name: req.body.Name });
+    if (product) {
+      return res.status(409).send("product with given name already exists");
+    }
+    cate = await categoryModel.findOne({ name: Category})
+    await client.connect();
+        const productsCollection = client.db("test").collection("products");
+
+        let newProduct = {
+          name: Name,
+          adjective: Adjective,
+          description: Description,
+          price: Price,
+          category: cate,
+          imageUrl: ImageUrl
+        }
+        await productsCollection.insertMany([newProduct]);
+
+    // product = await new productModel({
+    //   name: Name,
+    //   adjective: Adjective,
+    //   description: Description,
+    //   price: Price,
+    //   category: cate,
+    //   imageUrl: ImageUrl
+    // });
+    // await product.save();
+    // res.send(product);
+  } catch (err) {
+    console.log(err.message);
+  }
+});
+
+>>>>>>> 7c8802cbe3ce8f5edcd753710aebdfe44f1514b0
 router.get("/products-by-categories", async (req, res) => {
   try {
     const products = await productModel.aggregate([
