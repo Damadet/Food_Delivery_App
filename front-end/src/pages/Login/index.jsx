@@ -8,10 +8,12 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Header2 } from "../../components/Header2";
 
+
 const Login = () => {
     let navigate = useNavigate();
     const { register, handleSubmit } = useForm();
     const [loading, setLoading] = useState(false);
+//const [errorMessage, setErrorMessage] = useState('null');
 
     const onSubmit = (data) => {
         setLoading(true);
@@ -37,53 +39,54 @@ const Login = () => {
     //             navigate('/');
     //         })
     //         .catch((error) => {
-                // if (error.code === 'auth/wrong-password') {
-                //     toast.error('Wrong Password')
-                // }
-                // if (error.code === 'auth/user-not-found') {
-                //     toast.error('Email not found, please registe')
-                // }
+    //             if (error.code === 'auth/wrong-password') {
+    //                 toast.error('Wrong Password')
+    //             }
+    //             if (error.code === 'auth/user-not-found') {
+    //                 toast.error('Email not found, please registe')
+    //             }
     //             setLoading(false);
     //         })
     
     // }
-    fetch('http://localhost:8080/api/login', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            Email: data.email,
-            Password: data.password
-        })
-    }).then((response) => {
-        if (response.status === 200) {
+
+    //Damadet own
+
+        fetch('http://localhost:8080/api/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                Email: data.email,
+                Password: data.password
+            })
+        }).then((response) => {
+            if (response.status === 200) {
+                setLoading(false);
+                toast.success('Login successful!🎉', {
+                    position: "top-right",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: 'dark'
+                });
+                navigate('/home');
+            } else {
+                console.log(response.json());
+            }
+        }).catch((error) => {
             setLoading(false);
-            toast.success('Login successful!🎉', {
-                position: "top-right",
-                autoClose: 5000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: 'dark'
-            });
-            navigate('/home');
-        } else {
-            console.log(response.json());
-        }
-    }).catch((error) => {
-        if (error.message === 'Wrong email/password') {
-            console.log('wrong email or password')
-        }
-        // if (error.code === 'auth/user-not-found') {
-        //     toast.error('Email not found, please registe')
-        // }
-        
-        setLoading(false);
-        //toast.error(error)
-    })
+            //setErrorMessage(error.message)
+            console.log(error)
+        })
+
+  
+
+
 }
 
     return (
